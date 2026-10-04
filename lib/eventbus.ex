@@ -1,4 +1,4 @@
-defmodule EventBus do
+defmodule Eventbus do
   @moduledoc """
   Public API for the Eventbus event router.
   """
