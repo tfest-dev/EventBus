@@ -8,7 +8,7 @@ defmodule Eventbus.Application do
     children =
       [
         {Eventbus.Router, []}
-      ] ++ http_children()
+      ] ++ file_logger_children() ++ http_children()
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Eventbus.Supervisor)
   end
@@ -25,6 +25,20 @@ defmodule Eventbus.Application do
            ip: Keyword.get(config, :ip, {127, 0, 0, 1}),
            port: Keyword.get(config, :port, 4040)
          ]}
+      ]
+    else
+      []
+    end
+  end
+
+  defp file_logger_children do
+    config = Application.get_env(:eventbus, :file_logger, [])
+
+    if Keyword.get(config, :enabled, false) do
+      [
+        {Eventbus.Subscribers.FileLogger,
+         path: Keyword.get(config, :path, "eventbus_events.jsonl"),
+         patters: Keyword.get(config, :patterns, ["*"])}
       ]
     else
       []
